@@ -24,5 +24,51 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+        
+      - name: Check out this repo
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Installed package list
+        run: apt list --installed
+      - name: Remove Chrome
+        run: sudo apt purge google-chrome-stable
+      # Chromium is already installed!
+      # - name: Install software
+      #   run: sudo apt install -y chromium-browser
+      - name: Install all necessary packages
+        run: pip install requests beautifulsoup4 pandas webdriver-manager selenium
+      - name: Run the scraping script
+        run: python main.py
 
-      
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+    # Required mail server address:
+          server_address: email-smtp.us-east-1.amazonaws.com
+
+
+    # Required mail server port:
+          server_port: 465
+    # Optional (recommended): mail server username:
+          username: ${{secrets.MAIL_USERNAME}}
+    # Optional (recommended) mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+    # Required mail subject:
+          subject: Github Actions job result
+    # Required recipients' addresses:
+          to: roshanilalwani1111@gmail.com
+    # Required sender full name (address can be skipped):
+          from: Roshani Lalwani <roshanilalwani1111@gmail.com>
+    # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: true
+          
+          body: Build job of ${{github.repository}} completed successfully!
+          attachments: main.py
+
+    # Optional carbon copy recipients:
+    
+    # Optional unsigned/invalid certificates allowance:
+          ignore_cert: true
